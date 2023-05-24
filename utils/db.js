@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
+if (process.env.NODE_ENV !== "production") {
+   require('dotenv').config()
+}
 
 const connectDB = () => {
-   mongoose.connect('mongodb://localhost:27017/authTest', { useNewUrlParser: true, useUnifiedTopology: true })
+   console.log(process.env.MONGOURI)
+   mongoose.connect(process.env.MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true })
       .then(() => {
          console.log("Connected to Mongo")
       })
