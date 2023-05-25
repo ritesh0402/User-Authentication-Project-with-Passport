@@ -9,6 +9,18 @@ const localStrategy = require('passport-local');
 const passport = require('passport');
 const userModel = require('./models/user');
 const isLoggedIn = require('./utils/isLoggedIn');
+const MongoStore = require('connect-mongo')
+
+const store = MongoStore.create({
+   mongoUrl: process.env.MONGOURI,
+   touchAfter: 24 * 60 * 60,
+   crypto: { secret: 'codeword' }
+})
+
+store.on("error", function (err) {
+   console.log('store error')
+   console.log(err)
+})
 
 connectDB();
 
@@ -16,7 +28,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.use(express.urlencoded({ extended: true }));
 
-const sessionOpt = { secret: 'codeword', resave: false, saveUninitialized: false }
+const sessionOpt = { store, secret: 'codeword', resave: false, saveUninitialized: false }
 app.use(session(sessionOpt));
 
 app.use(passport.initialize())
